@@ -41,7 +41,7 @@ def get_customer_by_id(customer_id):
         return Customer.Customer(cur.fetchone())
 
 def get_customer_by_email(email):
-    if not UtilityMethods.is_email():
+    if not UtilityMethods.is_email(email):
         raise Exception(email + 'is not a valid email')
     conn = get_connection()
     cur = conn.cursor()
@@ -55,6 +55,8 @@ def get_customer_by_email(email):
         return Customer.Customer(cur.fetchone())
 
 
+def authenticate(username, password):
+    return 'am I authenticated?'
 
 
 
