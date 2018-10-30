@@ -3,11 +3,11 @@ import psycopg2.extras
 
 
 class Staff:
-    def __init__(self, staff_id,  first_name, last_name, password):
-        self.staff_id = staff_id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.password = password
+    def __init__(self, values):
+        self.staff_id = values[0]
+        self.first_name = values[1]
+        self.last_name = values[2]
+        self.password = values[3]
     def get_staff_by_ID(cur,staff_id):
         command = "Select staff_id, last_name, first_name, password from staff where staff_id = %s" % staff_id
         cur.execute(command)
@@ -31,3 +31,5 @@ class Staff:
             print ("Welcome %s %s." % (staff[2],staff[1]))
         else:
             print("Password incorrect.")
+    def authenticate_user(self,password):
+        return password == self.password

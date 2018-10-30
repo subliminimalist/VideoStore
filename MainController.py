@@ -3,8 +3,41 @@ import psycopg2.extras
 import Actor
 import Customer
 import UtilityMethods
+import Staff
+import Address
 
-connection_string = "dbname=video_store host=video-store.cpcwhvi5lixx.us-east-2.rds.amazonaws.com user=dev password=admindev"
+#connection_string = "dbname=video_store host=video-store.cpcwhvi5lixx.us-east-2.rds.amazonaws.com user=dev password=admindev"
+connection_string = "dbname=video_store host = video-store.cygscj4xt2ip.ap-northeast-1.rds.amazonaws.com user = dev password =admindev"
+
+def get_staff_by_ID(staff_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    command = "Select staff_id, last_name, first_name, password from staff where staff_id = %s" % staff_id
+    cur.execute(command)
+    staff = Staff.Staff(cur.fetchone())
+    return staff
+
+
+
+def add_new_customer(last_name,first_name,address,address2,district,postal_code,city,email,phone_number,store_id,country):
+    conn= get_connection()
+    cur = conn.curser()
+    city_id = None
+
+    while city_id == None:
+        command = "Select city_id from city WHERE city.city = %s"
+        cur.execute(command,city)
+        if cur.rowcount>0:
+            city_id = cur.fetchone()[0]
+        else:
+            city= input("That city was invalid. Try again:  ")
+
+    cur.execute(command,(address,address2,district,city_id,postal_code,phone_number))
+    address = Address.Address([address,address2,district,city_id,postal_code,phone_number])
+    address_id = address.add_address(conn)
+
+    command = "INSERT INTO customer (store_id,first_name,last_name,email,address_id) VALUES (%s,%s,%s,%s)"
+    cur.execute(command,(store_id,first_name,last_name,address_id))
 
 def get_actor_list(conn, last_name, first_name):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
